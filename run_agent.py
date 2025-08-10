@@ -3,21 +3,26 @@
 from main import Informacao, Ideia, Tarefa, session, processar_informacao, criar_tarefa_sugerida
 
 # --- Limpar dados para um teste limpo ---
-session.query(Informacao).delete()
-session.query(Ideia).delete()
-session.query(Tarefa).delete()
-session.commit()
-print("Banco de dados limpo para o teste.")
+#session.query(Informacao).delete()
+#session.query(Ideia).delete()
+#session.query(Tarefa).delete()
+#session.commit()
+#print("Banco de dados limpo para o teste.")
 
 # --- Cenário de Teste ---
 print("\n--- Cenário: Adicionando uma ideia existente ---")
-ideia_viagens = Ideia(conteudo="Planejar viagens desafiadoras para locais selvagens")
+ideia_viagens = Ideia(conteudo="Um workflow com agentes de IA pode ser uma boa pra etapas dessa gestão infos and tasks.")
 session.add(ideia_viagens)
 session.commit()
 print(f"Ideia '{ideia_viagens.conteudo}' adicionada.")
 
 print("\n--- Cenário: Adicionando uma nova informação ---")
-nova_info = Informacao(conteudo="A Patagônia é um local selvagem e ideal para aventuras")
+nova_info = Informacao(conteudo="Workflows com agentes de IA são ideais para processos definidos.")
+session.add(nova_info)
+session.commit()
+print(f"Informação '{nova_info.conteudo}' adicionada.")
+
+nova_info = Informacao(conteudo="Workflows com agentes de IA proporcionam mais confiabilidade.")
 session.add(nova_info)
 session.commit()
 print(f"Informação '{nova_info.conteudo}' adicionada.")

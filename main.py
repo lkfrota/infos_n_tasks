@@ -77,8 +77,23 @@ class Plano(Base):
     # Relacionamento 1:N com Tarefa (um Plano tem várias Tarefas)
     tarefas = relationship("Tarefa", backref="plano", cascade="all, delete-orphan")
 
+    def __init__(self, ideia: Ideia, tarefas: list):
+        if len(tarefas) < 2:
+            raise ValueError("Um Plano deve ter no mínimo duas Tarefas.")
+        
+        # Chama o construtor da classe base para inicializar os atributos
+        super().__init__(ideia=ideia, tarefas=tarefas)
+        
     def __repr__(self):
         return f"<Plano(ideia_id='{self.ideia_id}')>"
+
+class CaixaEntrada(Base):
+    __tablename__ = 'caixa_de_entrada'
+    id = Column(Integer, primary_key=True)
+    conteudo_bruto = Column(String, nullable=False)
+
+    def __repr__(self):
+        return f"<CaixaEntrada(conteudo_bruto='{self.conteudo_bruto}')>"
 
 # Criar o banco de dados e as tabelas
 Base.metadata.create_all(engine)

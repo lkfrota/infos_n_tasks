@@ -1,4 +1,4 @@
-from main import CaixaEntrada, Informacao, Ideia, Tarefa, Plano, session
+from modelo import CaixaEntrada, Informacao, Ideia, Tarefa, Plano, session
 import sys
 
 def adicionar_item():

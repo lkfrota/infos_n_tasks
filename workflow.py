@@ -5,14 +5,14 @@ from agente_aprovacao import agente_aprovacao, ApprovalDecision
 from modelo import session, Informacao, Ideia, Tarefa
 from typing import List, Dict, Any
 
-# Vari\u00e1vel global para armazenar o hist\u00f3rico da conversa e do loop.
-# Esta \u00e9 a solu\u00e7\u00e3o para garantir que o estado \u00e9 persistido entre as itera\u00e7\u00f5es do Loop.
+# Variável global para armazenar o histórico da conversa e do loop.
+# Esta é a solução para garantir que o estado é persistido entre as iteraçães do Loop.
 historico_de_interacoes: List[Dict[str, Any]] = []
 
 def interagir_com_usuario_e_sugerir(step_input: StepInput) -> StepOutput:
     """
-    Fun\u00e7\u00e3o que executa o agente real, interage com o usu\u00e1rio e gerencia
-    o hist\u00f3rico da conversa usando a vari\u00e1vel global.
+    Função que executa o agente real, interage com o usuário e gerencia
+    o histórico da conversa usando a variável global.
     """
     global historico_de_interacoes
     
@@ -21,26 +21,26 @@ def interagir_com_usuario_e_sugerir(step_input: StepInput) -> StepOutput:
         # Se for a primeira rodada, use a mensagem original.
         prompt_estruturado = f"Mensagem original da caixa de entrada: {step_input.message}"
     else:
-        # Se for uma itera\u00e7\u00e3o seguinte, use o \u00faltimo estado do hist\u00f3rico global.
+        # Se for uma iteração seguinte, use o último estado do histórico global.
         previous_state = historico_de_interacoes[-1]
         sugestao_anterior = previous_state.get("sugestao")
         feedback_usuario = previous_state.get("feedback_usuario")
         decisao_agente = previous_state.get("decisao_agente")
         
-        # Constr\u00f3i um prompt detalhado com o hist\u00f3rico da conversa.
+        # Constrói um prompt detalhado com o histórico da conversa.
         prompt_estruturado = f"""
         Mensagem original da caixa de entrada: {step_input.message}
 
-        Sugest\u00e3o do agente na rodada anterior:
-        Informa\u00e7\u00f5es: {sugestao_anterior.get('informacoes')}
+        Sugestão do agente na rodada anterior:
+        Informaçães: {sugestao_anterior.get('informacoes')}
         Ideias: {sugestao_anterior.get('ideias')}
         Tarefas: {sugestao_anterior.get('tarefas')}
 
-        O usu\u00e1rio deu o seguinte feedback para revis\u00e7\u00e3o:
+        O usuário deu o seguinte feedback para revisção:
         "{feedback_usuario}"
-        Decis\u00e3o do agente de aprova\u00e7\u00e3o: {decisao_agente.get('decision')}, Motivo: {decisao_agente.get('motivo')}
+        Decisão do agente de aprovação: {decisao_agente.get('decision')}, Motivo: {decisao_agente.get('motivo')}
 
-        Gere uma nova sugest\u00e3o revisada com base na mensagem original e no feedback do usu\u00e1rio.
+        Gere uma nova sugestão revisada com base na mensagem original e no feedback do usuário.
         """
         
     # --- LOG DE DEBBUGING ---
@@ -52,8 +52,8 @@ def interagir_com_usuario_e_sugerir(step_input: StepInput) -> StepOutput:
     # Executa o agente real com o prompt estruturado.
     sugestao_do_agente: RunResponse = agente_real.run(message=prompt_estruturado)
     
-    # Imprime a sugest\u00e3o do agente para o usu\u00e1rio
-    print("\n--- Sugest\u00e3o do Agente ---")
+    # Imprime a sugestão do agente para o usuário
+    print("\n--- Sugestão do Agente ---")
     print("\nInformacoes:")
     for info in sugestao_do_agente.content.informacoes:
         print(f"- {info}")
@@ -64,26 +64,26 @@ def interagir_com_usuario_e_sugerir(step_input: StepInput) -> StepOutput:
     for tarefa in sugestao_do_agente.content.tarefas:
         print(f"- {tarefa}")
     
-    # Pede a valida\u00e7\u00e3o do usu\u00e1rio
-    feedback = input("\nA sugest\u00e3o est\u00e1 correta? (sim/n\u00e3o) ")
+    # Pede a validação do usuário
+    feedback = input("\nA sugestão está correta? (sim/não) ")
 
-    # Adiciona a decis\u00e3o do agente de aprova\u00e7\u00e3o aqui, para ser usada no pr\u00f3ximo prompt e na condi\u00e7\u00e3o de parada.
+    # Adiciona a decisão do agente de aprovação aqui, para ser usada no próximo prompt e na condição de parada.
     decisao_agente = agente_aprovacao.run(message=feedback).content.model_dump()
-    print(f"\nAgente de Aprova\u00e7\u00e3o: Decis\u00e3o: {decisao_agente.get('decision')}, Motivo: {decisao_agente.get('motivo')}")
+    print(f"\nAgente de Aprovação: Decisão: {decisao_agente.get('decision')}, Motivo: {decisao_agente.get('motivo')}")
 
-    # Adiciona o estado completo da rodada ao hist\u00f3rico global.
+    # Adiciona o estado completo da rodada ao histórico global.
     historico_de_interacoes.append({
         "sugestao": sugestao_do_agente.content.model_dump(),
         "feedback_usuario": feedback,
         "decisao_agente": decisao_agente
     })
 
-    # Retorna o \u00faltimo estado para que o pr\u00f3ximo passo externo ao loop tenha acesso.
+    # Retorna o último estado para que o próximo passo externo ao loop tenha acesso.
     return StepOutput(content=historico_de_interacoes[-1])
 
 def end_condition_semantica(outputs: List[StepOutput]) -> bool:
     """
-    Condi\u00e7\u00e3o de encerramento do loop. Agora, usa a vari\u00e1vel global.
+    Condição de encerramento do loop. Agora, usa a variável global.
     """
     global historico_de_interacoes
     if not historico_de_interacoes:
@@ -96,16 +96,16 @@ def end_condition_semantica(outputs: List[StepOutput]) -> bool:
 
 def criar_objetos_no_banco(step_input: StepInput) -> StepOutput:
     """
-    Fun\u00e7\u00e3o final para criar os objetos no banco de dados.
-    Verifica se a aprova\u00e7\u00e3o foi dada antes de persistir os dados.
+    Função final para criar os objetos no banco de dados.
+    Verifica se a aprovação foi dada antes de persistir os dados.
     """
     global historico_de_interacoes
     try:
-        # Acessa o estado final do hist\u00f3rico global.
+        # Acessa o estado final do histórico global.
         if not historico_de_interacoes:
             return StepOutput(
                 success=False,
-                content="Workflow finalizado sem hist\u00f3rico de intera\u00e7\u00f5es."
+                content="Workflow finalizado sem histórico de interaçães."
             )
             
         last_state = historico_de_interacoes[-1]
@@ -114,7 +114,7 @@ def criar_objetos_no_banco(step_input: StepInput) -> StepOutput:
         if decisao_final.get('decision') != 'aprovar':
             return StepOutput(
                 success=False,
-                content=f"Workflow finalizado sem aprova\u00e7\u00e3o. Decis\u00e3o final: '{decisao_final.get('decision')}'."
+                content=f"Workflow finalizado sem aprovação. Decisão final: '{decisao_final.get('decision')}'."
             )
 
         dados_validados_dict = last_state.get("sugestao")
@@ -136,7 +136,7 @@ def criar_objetos_no_banco(step_input: StepInput) -> StepOutput:
         
         session.commit()
         
-        # Limpa o hist\u00f3rico global ap\u00f3s a conclus\u00e3o do workflow.
+        # Limpa o histórico global após a conclusão do workflow.
         historico_de_interacoes = []
         
         return StepOutput(
@@ -145,7 +145,7 @@ def criar_objetos_no_banco(step_input: StepInput) -> StepOutput:
         )
     except Exception as e:
         session.rollback()
-        # Limpa o hist\u00f3rico global em caso de erro.
+        # Limpa o histórico global em caso de erro.
         historico_de_interacoes = []
         return StepOutput(
             success=False,
@@ -155,7 +155,7 @@ def criar_objetos_no_banco(step_input: StepInput) -> StepOutput:
 # Define o fluxo de trabalho
 workflow = Workflow(
     name="Workflow de Processamento da Caixa de Entrada",
-    description="Processa um item da Caixa de Entrada, valida com o usu\u00e1rio e salva no banco de dados.",
+    description="Processa um item da Caixa de Entrada, valida com o usuário e salva no banco de dados.",
     steps=[
         Loop(
             name="Validacao Humana",

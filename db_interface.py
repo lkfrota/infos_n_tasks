@@ -1,6 +1,16 @@
 from modelo import CaixaEntrada, Informacao, Ideia, Tarefa, Plano, session
 import sys
 
+
+# --- Limpeza de dados (opcional, para testes recorrentes) ---
+# Você pode descomentar as linhas abaixo para limpar as tabelas antes de cada teste
+# session.query(Informacao).delete()
+# session.query(Ideia).delete()
+# session.query(Tarefa).delete()
+# session.query(Plano).delete()
+# session.commit()
+# print("Tabelas limpas para o teste.")
+
 def adicionar_item():
     """
     Adiciona um novo item à Caixa de Entrada.

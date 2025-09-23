@@ -1,11 +1,11 @@
-from email import message
+
 from dotenv import load_dotenv
 import os
 load_dotenv(override=True)
 google_api_key = os.getenv('GOOGLE_API_KEY')
 tavily_api_key = os.getenv('TAVILY_API_KEY')
 
-from typing import List
+from typing import List, Optional
 from langchain.chat_models import init_chat_model
 from langgraph.graph import MessagesState
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -31,96 +31,81 @@ class SuggestionClasses(BaseModel):
         default_factory=list,
         description="Uma lista de ações concretas e executáveis extraídas do texto."
     )
+    aprovado: bool = Field(
+        default=False,
+        description="False inicialmente ou se precisa de revisão, True se a sugestão foi aprovada pelo usuário."
+    )
 
 class MessagesState(MessagesState):
-    # Add any keys needed beyond messages, which is pre-built 
-    pass
+    current_proposal: Optional[SuggestionClasses] = None
 
 # Node
 def llm(state: MessagesState):
     structured_llm = llmodel.with_structured_output(SuggestionClasses)
     suggestion = structured_llm.invoke(state["messages"])
-    return {"messages": [HumanMessage(content=f"Proposta estruturada: {suggestion.model_dump_json()}")]}
+    return {
+        "messages": [HumanMessage(content=f"Proposta estruturada: {suggestion.model_dump_json()}")],
+        "current_proposal": suggestion
+    }
+
+def review_gate(state: MessagesState):
+    proposal = state["current_proposal"]
+    if proposal.aprovado:
+        return
+    print(f"\n=== PROPOSTA PARA REVISÃO ===")
+    print(f"Informações: {proposal.informacoes}")
+    print(f"Ideias: {proposal.ideias}")
+    print(f"Tarefas: {proposal.tarefas}")
+    print("=" * 50)
     
+    feedback = input("\nSeu feedback (enter para pular): ")
+    if feedback.strip():
+        return {"messages": [HumanMessage(content=f"Feedback do usuário: {feedback}")]}
+    return {"messages": []}
+
+def decision(state: MessagesState):
+    if state["current_proposal"].aprovado:
+        return "end"
+    else:
+        return "llm"
+
 # Build graph
 builder = StateGraph(MessagesState)
+# Nodes
 builder.add_node("llm", llm)
+builder.add_node("review_gate", review_gate)
+# Edges
 builder.add_edge(START, "llm")
-builder.add_edge("llm", END)
+builder.add_edge("llm", "review_gate")
+
+builder.add_conditional_edges("review_gate", decision, {"llm": "llm","end": END})
+#builder.add_edge("review_gate", END) 
+
 memory = InMemorySaver()
 graph = builder.compile(checkpointer=memory)
 
+if False:
+    try:
+        graph.get_graph().draw_mermaid_png(output_file_path="grafo.png",  max_retries=3, retry_delay=2.0)
+        print("Grafo salvo como grafo.png")
+    except Exception as e:
+        print(f"Erro ao gerar PNG: {e}")
+        mermaid_code = graph.get_graph().draw_mermaid()
+        print("=== CÓDIGO MERMAID ===")
+        print(mermaid_code)
+        print("Abra em: https://mermaid.live/")
+    raise SystemExit
 config = {"configurable": {"thread_id": "1"}}
 
-
 def stream_graph_updates(message_list):
-    for event in graph.stream({"messages": message_list}, config):
-        for value in event.values():
-            print("Assistant:", value["messages"][-1].content)
+    for chunk in graph.stream({"messages": message_list}, config, stream_mode="values"):
+        if isinstance(chunk, dict) and "messages" in chunk and chunk["messages"]:
+            last_content = chunk["messages"][-1].content
+    if last_content is not None:
+        print("Assistant:", last_content)
+    return last_content
 
+print("=== Iniciando análise ===")
 stream_graph_updates([SystemMessage(content=PROMPT_ORGANIZADOR),
-                                HumanMessage(content=f'\nTexto para análise:\n{item_teste}')])
+                     HumanMessage(content=f'\nTexto para análise:\n{item_teste}')])
 
-while True:
-    user_input = input('User: ')
-    if user_input.lower() in ['quit', 'q']:
-        break
-    stream_graph_updates([HumanMessage(content=user_input),])
-
-
-
-
-"""from typing_extensions import TypedDict
-
-class State(TypedDict):
-    graph_state: str
-
-def node_1(state: State) -> State:
-    print("---Node 1---")
-    return {"graph_state": state['graph_state'] +" I am"}
-
-def node_2(state: State) -> State:
-    print("---Node 2---")
-    return {"graph_state": state['graph_state'] +" happy!"}
-
-def node_3(state: State) -> State:
-    print("---Node 3---")
-    return {"graph_state": state['graph_state'] +" sad!"}
-
-import random
-from typing import Literal
-
-def decide_mood(state: State) -> Literal["node_2", "node_3"]:
-    
-    # Often, we will use state to decide on the next node to visit
-    user_input = state['graph_state'] 
-    
-    # Here, let's just do a 50 / 50 split between nodes 2, 3
-    if random.random() < 0.5:
-
-        # 50% of the time, we return Node 2
-        return "node_2"
-    
-    # 50% of the time, we return Node 3
-    return "node_3"
-
-
-from langgraph.graph import StateGraph, START, END
-
-# Build graph
-builder = StateGraph(State)
-builder.add_node("node_1", node_1)
-builder.add_node("node_2", node_2)
-builder.add_node("node_3", node_3)
-
-# Logic
-builder.add_edge(START, "node_1")
-builder.add_conditional_edges("node_1", decide_mood)
-builder.add_edge("node_2", END)
-builder.add_edge("node_3", END)
-
-# Add
-graph = builder.compile()
-
-output = graph.invoke({"graph_state": "Hi, this is me."})
-print(output['graph_state'])"""

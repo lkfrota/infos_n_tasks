@@ -69,8 +69,26 @@ Mais imediatamente ainda falta construir:
 4. Se o tempo de realização for inferior a 2 minutos o aplicativo sugere de realizar imediatamente;
 5. Se o tempo de realização for superior a 2 minutos o aplicativo pede mais atributos como importância e urgência (matriz Eisenhower), data para realização, local para realização, etc.
 6. Com esses atributos o aplicativo define outros como "fazer imdediatamente", "delegar", "agendar", "eliminar";
-7. O aplicativo enviar as tarefas resultantes desse processo ao Google Calendar ou Google Tasks;
+7. O aplicativo envia as tarefas resultantes desse processo ao Google Calendar ou Google Tasks;
 
 Depois a evolução do aplicativo será:
-8. Um destino tipo arquivo morto ou simplesmente um atributo "feito" para as tarefas enviadas aos aplicativos Google;
+8. Um destino tipo arquivo morto ou simplesmente um atributo "feito/agendado" para as tarefas enviadas aos aplicativos Google;
 9. O aplicativo buscar relações e oportunidades entre todo o conjunto de informações, ideias, tarefas e planos e sugerir vínculos entre esses elementos;
+
+________________________________________________________
+Após mais alguns dias trabalhando o estado do projeto é o seguinte:
+
+Abandonei o Agno depois de muitas tentativas para ter o workflow_session_state como input no loop e não consegui. Tive avanços interessantes e aprendi um monte sobre o framework mas escolhi mudar para o Langgraph para tentar controlar mais a solução. O aprendizado mais marcante nessa fase com o Agno foi o de criar Step customizado com função Python onde um dos inputs é o pŕoprio objeto Workflow.
+
+Com o Langgraph construí 2 soluções distintas o graph_langgraph_backup.py com um loop completo em grafo e o graph.py que usa o langchain só para acessar o llm mas todo o loop acontece em fluxo Python alheio aos recursos langgraph. Ambos arquivos criam o fluxo desde consultar os itens na Caixa de Entrada até salvar os itens processados e classificados nas respectivas classes previstas em modelo.py.
+
+Agora comecei a esboçar os itens 1 e 2. Em umas reflexões com assistente de programação entendi que devo convergir logo para um MVP, ou seja, um fluxo completo da ideia do aplicativo mesmo que sem profundidade. Os recursos mais avançados e flexibilidades ficarão para um momento seguinte.
+
+Acabei de pedir para a IA para me ajudar a criar o framework global do aplicativo:
+Com input do usuário popular a Caixa de Entrada (CE);
+Fazer, com supervisão humana, pré-processamento dos itens da CE fragmentando conforme claasificações estabelecidas;
+Fazer processamento principal dos itens classificados, consultando usuário conforme regras e atributos;
+Após passar por esse fluxo com sucesso, as Tarefas serão enviadas para o Google Calendar ou Google Tasks;
+Obtendo sucesso no item anterior essas Tarefas serão reclassificadas como arquivo morto ou arquivado;
+
+O fluxo descrito acima é desde a entrada até a saída. Mas haverá um fluxo rotativo interno com inteligência para encontrar relações, oportunidades, desdobramentos, redundâncias, etc, sugerindo para o usuário transformações nos itens conforme esses achados. Esse fluxo será um fase avançada.

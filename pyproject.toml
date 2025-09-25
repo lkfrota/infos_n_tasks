@@ -15,4 +15,6 @@ dependencies = [
     "matplotlib>=3.10.6",
     "packaging>=25.0",
     "sqlalchemy>=2.0.42",
+    "python-telegram-bot>=21.6",
+    "telegram>=0.0.1",
 ]

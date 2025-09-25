@@ -681,7 +681,9 @@ dependencies = [
     { name = "langgraph" },
     { name = "matplotlib" },
     { name = "packaging" },
+    { name = "python-telegram-bot" },
     { name = "sqlalchemy" },
+    { name = "telegram" },
 ]
 
 [package.metadata]
@@ -695,7 +697,9 @@ requires-dist = [
     { name = "langgraph", specifier = ">=0.6.7" },
     { name = "matplotlib", specifier = ">=3.10.6" },
     { name = "packaging", specifier = ">=25.0" },
+    { name = "python-telegram-bot", specifier = ">=21.6" },
     { name = "sqlalchemy", specifier = ">=2.0.42" },
+    { name = "telegram", specifier = ">=0.0.1" },
 ]
 
 [[package]]
@@ -1624,6 +1628,18 @@ wheels = [
 ]
 
 [[package]]
+name = "python-telegram-bot"
+version = "22.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/05/e6/8e855e18627b7e256a57727344dd5479be0ec25e002233276b8bba7db4da/python_telegram_bot-22.4.tar.gz", hash = "sha256:ca332925a5ef3815dfba9dac12382232b840c2f57e2c1e660b1a31b5cb7341fe", size = 1482797, upload-time = "2025-09-13T15:16:21.374Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/63/76/f38c7db5a55a176d5e194ad36ba000b6da7d15363f31cb93fa41542bd554/python_telegram_bot-22.4-py3-none-any.whl", hash = "sha256:5f73d6501fbe9118424dd04213311efec1b442e81a4900f8816102601c83685c", size = 729394, upload-time = "2025-09-13T15:16:18.813Z" },
+]
+
+[[package]]
 name = "pyyaml"
 version = "6.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1779,6 +1795,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/28/e3/55dcc2cfbc3ca9c29
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f1/7b/ce1eafaf1a76852e2ec9b22edecf1daa58175c090266e9f6c64afcd81d91/stack_data-0.6.3-py3-none-any.whl", hash = "sha256:d5558e0c25a4cb0853cddad3d77da9891a08cb85dd9f9f91b9f8cd66e511e695", size = 24521, upload-time = "2023-09-30T13:58:03.53Z" },
 ]
+
+[[package]]
+name = "telegram"
+version = "0.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/9d/ca/8bdf2deb93b9f6971dabf2ddc827c2a98ce23e13582a15b37e9bc169f226/telegram-0.0.1.tar.gz", hash = "sha256:d405a0af4c868a8dbeae6d03e297e21c7ee6269e11e2ed3810e15544aba02591", size = 879, upload-time = "2015-09-29T07:32:18.348Z" }
 
 [[package]]
 name = "tenacity"

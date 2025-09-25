@@ -24,8 +24,8 @@ Sua tarefa é analisar o conteúdo passado a você e extrair todas as Informaç�
 relevantes presentes no conteúdo.
 
 As Informações são fatos ou dados objetivos.
-As Ideias são pensamentos, questões e desejos, vagos ou indecisos.
-As Tarefas são ações concretas, definidas e executáveis.
+As Ideias são pensamentos, questões e desejos, vagos ou indecisos. Se enquadram aqui também Ideias de projetos (Tarefas muito grandes).
+As Tarefas são ações concretas, definidas e executáveis em poucas horas na rotina diária de uma pessoa. Tarefas maiores que isso serão só Ideias nesse momento.
  
 Seja detalhado e extraia todos os itens relevantes para cada categoria.
 Cada item deve ser completo com seu contexto, para ser compreendido isoladamente dos outros itens extraidos.

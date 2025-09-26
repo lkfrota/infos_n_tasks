@@ -29,7 +29,7 @@ As Tarefas são ações concretas, definidas e executáveis em poucas horas na r
  
 Seja detalhado e extraia todos os itens relevantes para cada categoria.
 Cada item deve ser completo com seu contexto, para ser compreendido isoladamente dos outros itens extraidos.
-Quando você for criar um texto com sujeito gramatical, use primeira pessoa do singular.
+Quando você for criar um texto com sujeito gramatical, use primeira pessoa do singular (por exemplo "Eu recebi a encomenda....").
 
 Ao receber o feedback do usuário, verifique:
 - Se for uma expressão de aprovação mantenha absolutamente a última sugestão e altere somente o campo 'aprovado' para 'True';
